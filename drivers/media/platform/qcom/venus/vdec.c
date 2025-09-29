@@ -550,6 +550,9 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
 	struct vb2_queue *dst_vq;
 	struct hfi_frame_data fdata = {0};
 	int ret;
+    struct venus_core *core = inst->core;
+    struct device *dev = core->dev_dec;
+    dev_err(dev, "[%s] start\n", __func__);
 
 	ret = v4l2_m2m_ioctl_try_decoder_cmd(file, fh, cmd);
 	if (ret)
@@ -558,6 +561,7 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
 	mutex_lock(&inst->lock);
 
 	if (cmd->cmd == V4L2_DEC_CMD_STOP) {
+		dev_err(dev, "[%s] dealing with stop cmd\n", __func__);
 		/*
 		 * Implement V4L2_DEC_CMD_STOP by enqueue an empty buffer on
 		 * decoder input to signal EOS.
@@ -573,8 +577,12 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
 			fdata.device_addr = 0xdeadb000;
 
 		ret = hfi_session_process_buf(inst, &fdata);
+        if (ret) {
+                dev_err(dev, "[%s] hfi_session_process_buf failed with ret:%d\n", __func__, ret);
+        }
 
 		if (!ret && inst->codec_state == VENUS_DEC_STATE_DECODING) {
+			dev_err(dev, "[%s] hfi_session_process_buf succeeded.\n", __func__);
 			inst->codec_state = VENUS_DEC_STATE_DRAIN;
 			inst->drain_active = true;
 		}
@@ -588,6 +596,7 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
 	}
 
 unlock:
+	dev_err(dev, "[%s] end\n", __func__);
 	mutex_unlock(&inst->lock);
 	return ret;
 }
