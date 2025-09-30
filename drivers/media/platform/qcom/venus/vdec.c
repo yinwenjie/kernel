@@ -1430,6 +1430,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
 
 	vbuf = venus_helper_find_buf(inst, type, tag);
 	if (!vbuf) {
+		dev_err(dev, "[%s] venus_helper_find_buf returns null.\n", __func__);
 		venus_helper_change_dpb_owner(inst, vbuf, type, buf_type, tag);
 		return;
 	}
