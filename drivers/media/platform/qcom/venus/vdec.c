@@ -1418,6 +1418,8 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
 	struct vb2_v4l2_buffer *vbuf;
 	struct vb2_buffer *vb;
 	unsigned int type;
+	struct venus_core *core = inst->core;
+    struct device *dev = core->dev_dec;
 
 	vdec_pm_touch(inst);
 
@@ -1443,11 +1445,13 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
 		vbuf->sequence = inst->sequence_cap++;
 
 		if (vbuf->flags & V4L2_BUF_FLAG_LAST) {
+			dev_err(dev, "[%s] dealing with vbuf+V4L2_BUF_FLAG_LAST\n", __func__);
 			const struct v4l2_event ev = { .type = V4L2_EVENT_EOS };
 
 			v4l2_event_queue_fh(&inst->fh, &ev);
 
 			if (inst->codec_state == VENUS_DEC_STATE_DRAIN) {
+				dev_err(dev, "[%s] deactivate drain and set state to STOPPED\n", __func__);
 				inst->drain_active = false;
 				inst->codec_state = VENUS_DEC_STATE_STOPPED;
 			}
