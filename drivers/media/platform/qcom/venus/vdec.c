@@ -275,7 +275,7 @@ static int vdec_check_src_change(struct venus_inst *inst)
 
 	if (!(inst->codec_state == VENUS_DEC_STATE_CAPTURE_SETUP) ||
 	    !inst->reconfig)
-		dev_dbg(inst->core->dev, VDBGH "wrong state\n");
+		dev_warn(inst->core->dev, VDBGH "wrong state\n");
 
 done:
 	return 0;
@@ -1536,7 +1536,7 @@ static void vdec_event_change(struct venus_inst *inst,
 	if (inst->pic_struct != ev_data->pic_struct)
 		inst->pic_struct = ev_data->pic_struct;
 
-	dev_dbg(dev, VDBGM "event %s sufficient resources (%ux%u)\n",
+	dev_warn(dev, VDBGM "event %s sufficient resources (%ux%u)\n",
 		sufficient ? "" : "not", ev_data->width, ev_data->height);
 
 	switch (inst->codec_state) {
@@ -1564,7 +1564,7 @@ static void vdec_event_change(struct venus_inst *inst,
 
 		ret = hfi_session_flush(inst, HFI_FLUSH_OUTPUT, false);
 		if (ret)
-			dev_dbg(dev, VDBGH "flush output error %d\n", ret);
+			dev_warn(dev, VDBGH "flush output error %d\n", ret);
 	}
 
 	inst->next_buf_last = true;
@@ -1611,7 +1611,7 @@ static void vdec_event_notify(struct venus_inst *inst, u32 event,
 
 static void vdec_flush_done(struct venus_inst *inst)
 {
-	dev_dbg(inst->core->dev_dec, VDBGH "flush done\n");
+	dev_warn(inst->core->dev_dec, VDBGH "flush done\n");
 }
 
 static const struct hfi_inst_ops vdec_hfi_ops = {

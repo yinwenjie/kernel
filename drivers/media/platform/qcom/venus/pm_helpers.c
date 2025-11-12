@@ -233,7 +233,7 @@ static int load_scale_bw(struct venus_core *core)
 	if (!total_avg && !total_peak)
 		total_avg = kbps_to_icc(1000);
 
-	dev_dbg(core->dev, VDBGL "total: avg_bw: %u, peak_bw: %u\n",
+	dev_warn(core->dev, VDBGL "total: avg_bw: %u, peak_bw: %u\n",
 		total_avg, total_peak);
 
 	return icc_set_bw(core->video_path, total_avg, total_peak);
@@ -965,7 +965,7 @@ static int core_get_v4(struct venus_core *core)
 	if (!res->vcodec_pmdomains_num)
 		legacy_binding = true;
 
-	dev_info(dev, "%s legacy binding\n", legacy_binding ? "" : "non");
+	dev_warn(dev, "%s legacy binding\n", legacy_binding ? "" : "non");
 
 	ret = vcodec_clks_get(core, dev, core->vcodec0_clks, res->vcodec0_clks);
 	if (ret)
@@ -1127,7 +1127,7 @@ static int load_scale_v4(struct venus_inst *inst)
 		dev_pm_opp_put(opp);
 
 	if (freq > max_freq) {
-		dev_dbg(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
+		dev_warn(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
 			freq, max_freq);
 		freq = max_freq;
 		goto set_freq;

@@ -460,7 +460,7 @@ put_ts_metadata(struct venus_inst *inst, struct vb2_v4l2_buffer *vbuf)
 	}
 
 	if (slot == -1) {
-		dev_dbg(inst->core->dev, VDBGL "no free slot\n");
+		dev_warn(inst->core->dev, VDBGL "no free slot\n");
 		return;
 	}
 
