@@ -584,7 +584,6 @@ static void hfi_session_ftb_done(struct venus_core *core,
 		goto done;
 
 	if (hfi_flags & HFI_BUFFERFLAG_EOS) {
-		dev_err(dev, "[%s] V4L2_BUF_FLAG_LAST added to ftb flag.\n", __func__);
 		flags |= V4L2_BUF_FLAG_LAST;
 	}
 
