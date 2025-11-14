@@ -519,8 +519,10 @@ static void hfi_session_flush_done(struct venus_core *core,
 
 	inst->error = pkt->error_type;
 	complete(&inst->done);
+	dev_warn(inst->core->dev, VDBGH "%s begin line: %d\n", __func__, __LINE__);
 	if (inst->ops->flush_done)
 		inst->ops->flush_done(inst);
+	dev_warn(inst->core->dev, VDBGH "%s end line: %d\n", __func__, __LINE__);
 }
 
 static void hfi_session_etb_done(struct venus_core *core,
@@ -529,8 +531,10 @@ static void hfi_session_etb_done(struct venus_core *core,
 	struct hfi_msg_session_empty_buffer_done_pkt *pkt = packet;
 
 	inst->error = pkt->error_type;
+	dev_warn(inst->core->dev, VDBGH "%s begin line: %d\n", __func__, __LINE__);
 	inst->ops->buf_done(inst, HFI_BUFFER_INPUT, pkt->input_tag,
 			    pkt->filled_len, pkt->offset, 0, 0, 0);
+	dev_warn(inst->core->dev, VDBGH "%s end line: %d\n", __func__, __LINE__);
 }
 
 static void hfi_session_ftb_done(struct venus_core *core,
@@ -544,6 +548,7 @@ static void hfi_session_ftb_done(struct venus_core *core,
 	u32 pic_type = 0, buffer_type = 0, output_tag = -1;
 	struct device *dev = core->dev;
 
+	dev_warn(inst->core->dev, VDBGH "%s begin line: %d\n", __func__, __LINE__);
 	if (session_type == VIDC_SESSION_TYPE_ENC) {
 		struct hfi_msg_session_fbd_compressed_pkt *pkt = packet;
 
@@ -557,6 +562,7 @@ static void hfi_session_ftb_done(struct venus_core *core,
 		buffer_type = HFI_BUFFER_OUTPUT;
 
 		error = pkt->error_type;
+		dev_warn(inst->core->dev, VDBGH "%s enc line: %d\n", __func__, __LINE__);
 	} else if (session_type == VIDC_SESSION_TYPE_DEC) {
 		struct hfi_msg_session_fbd_uncompressed_plane0_pkt *pkt =
 			packet;
@@ -575,8 +581,10 @@ static void hfi_session_ftb_done(struct venus_core *core,
 			buffer_type = HFI_BUFFER_OUTPUT2;
 
 		error = pkt->error_type;
+		dev_warn(inst->core->dev, VDBGH "%s dec line: %d\n", __func__, __LINE__);
 	} else {
 		error = HFI_ERR_SESSION_INVALID_PARAMETER;
+		dev_err(inst->core->dev, VDBGH "%s err line: %d\n", __func__, __LINE__);
 	}
 
 	if (buffer_type != HFI_BUFFER_OUTPUT &&
@@ -585,8 +593,9 @@ static void hfi_session_ftb_done(struct venus_core *core,
 
 	if (hfi_flags & HFI_BUFFERFLAG_EOS) {
 		flags |= V4L2_BUF_FLAG_LAST;
+		dev_warn(inst->core->dev, VDBGH "%s eos line: %d\n", __func__, __LINE__);
 	}
-
+		
 	switch (pic_type) {
 	case HFI_PICTURE_IDR:
 	case HFI_PICTURE_I:
@@ -614,6 +623,7 @@ done:
 	inst->error = error;
 	inst->ops->buf_done(inst, buffer_type, output_tag, filled_len,
 			    offset, flags, hfi_flags, timestamp_us);
+	dev_warn(inst->core->dev, VDBGH "%s buf done finish line: %d\n", __func__, __LINE__);
 }
 
 static void hfi_session_start_done(struct venus_core *core,
